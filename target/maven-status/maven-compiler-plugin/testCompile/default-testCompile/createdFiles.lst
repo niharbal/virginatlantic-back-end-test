@@ -1,0 +1,3 @@
+com\virginholidays\backend\test\resource\FlightInfoResourceTest.class
+com\virginholidays\backend\test\repository\FlightInfoRepositoryImplTest.class
+com\virginholidays\backend\test\service\FlightInfoServiceImplTest.class

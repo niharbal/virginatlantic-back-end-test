@@ -1,0 +1,8 @@
+com\virginholidays\backend\test\service\FlightInfoService.class
+com\virginholidays\backend\test\service\FlightInfoServiceImpl.class
+com\virginholidays\backend\test\repository\FlightInfoRepository.class
+com\virginholidays\backend\test\repository\FlightInfoRepositoryImpl.class
+com\virginholidays\backend\test\api\Flight.class
+com\virginholidays\backend\test\resource\FlightInfoResource.class
+com\virginholidays\backend\test\BackEndTestApplication.class
+com\virginholidays\backend\test\configuration\DataSourceConfiguration.class
