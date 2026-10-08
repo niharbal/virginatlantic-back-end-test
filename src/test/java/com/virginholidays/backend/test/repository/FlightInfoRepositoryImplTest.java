@@ -17,6 +17,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ResourceLoader;
@@ -54,6 +56,9 @@ public class FlightInfoRepositoryImplTest {
         when(resourceLoader.getClassLoader()).thenReturn(classLoader);
         when(classLoader.getResource(anyString())).thenReturn(resource);
 
+        // initialize the CSV cache (normally invoked by Spring via @PostConstruct)
+        repository.loadFlightData();
+
         // act
         Optional<List<Flight>> maybeFlights = repository
                 .findAll()
@@ -83,5 +88,9 @@ public class FlightInfoRepositoryImplTest {
         assertThat(maybeFlights.get().get(11).days().get(4), equalTo(DayOfWeek.THURSDAY));
         assertThat(maybeFlights.get().get(11).days().get(5), equalTo(DayOfWeek.FRIDAY));
         assertThat(maybeFlights.get().get(11).days().get(6), equalTo(DayOfWeek.SATURDAY));
+
+        // A second repository call must use the cached data and must not reload the CSV.
+        repository.findAll().toCompletableFuture().get();
+        verify(classLoader, times(1)).getResource("flights.csv");
     }
 }

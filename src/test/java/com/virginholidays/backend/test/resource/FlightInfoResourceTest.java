@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.equalTo;
 @ExtendWith(MockitoExtension.class)
 class FlightInfoResourceTest {
 
-    // FIXME - applicant to complete.
+	// FIX added
 	@Mock
     private FlightInfoService flightInfoService;
 

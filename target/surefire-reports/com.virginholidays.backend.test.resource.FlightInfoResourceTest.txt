@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.virginholidays.backend.test.resource.FlightInfoResourceTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 s - in com.virginholidays.backend.test.resource.FlightInfoResourceTest

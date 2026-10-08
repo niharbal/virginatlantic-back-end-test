@@ -19,6 +19,7 @@ import java.util.concurrent.CompletionStage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
+import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -35,6 +36,8 @@ public class FlightInfoRepositoryImpl implements FlightInfoRepository {
 
     private final DataSourceConfiguration dataSourceConfiguration;
 
+    private List<Flight> flights;
+
 
     /**
      * The constructor
@@ -47,31 +50,35 @@ public class FlightInfoRepositoryImpl implements FlightInfoRepository {
         this.dataSourceConfiguration = dataSourceConfiguration;
     }
 
-    @Override
-    public CompletionStage<Optional<List<Flight>>> findAll() {
+    /**
+     * Loads the CSV once when the repository bean is created.
+     * Subsequent requests use the in-memory data.
+     */
+    @PostConstruct
+    void loadFlightData() {
 
-        LOGGER.info("Loading flight information");
+        LOGGER.info("Loading flight information from CSV");
 
-        // load the resource
-        URL resource = requireNonNull(resourceLoader.getClassLoader()).getResource(dataSourceConfiguration.getCsvLocation());
+        URL resource = requireNonNull(resourceLoader.getClassLoader())
+                .getResource(dataSourceConfiguration.getCsvLocation());
 
-        // create the reader
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(requireNonNull(resource).openStream()))) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(requireNonNull(resource).openStream()))) {
 
-            // map the flights
-            List<Flight> flights = reader
-                    .lines()
+            flights = reader.lines()
                     .skip(1L)
                     .map(this::flight)
                     .toList();
-
-            // return the results
-            return completedFuture(ofNullable(flights));
 
         } catch (IOException e) {
             LOGGER.error("Could not retrieve flight data", e);
             throw new UncheckedIOException(e);
         }
+    }
+
+    @Override
+    public CompletionStage<Optional<List<Flight>>> findAll() {
+        return completedFuture(ofNullable(flights));
     }
 
     /**

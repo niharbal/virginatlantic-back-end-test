@@ -40,17 +40,17 @@ public class FlightInfoResource {
      * @param date the chosen date
      * @return flights for the day of the chosen date
      */
-    @RequestMapping(method = RequestMethod.GET, path = "/{date}/results")   
+    @RequestMapping(method = RequestMethod.GET, path = "/{date}/results")
     public CompletionStage<ResponseEntity<?>> getResults(
             @PathVariable("date")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        return flightInfoService.findFlightByDate(date).thenApply(result -> {
-            if (result.isEmpty()) {
+        return flightInfoService.findFlightByDate(date).thenApply(maybeResults -> {
+            if (maybeResults.isEmpty()) {
                 return status(HttpStatus.NO_CONTENT).cacheControl(noCache()).build();
             }
 
-            List<Flight> results = result.get();
+            List<Flight> results = maybeResults.get();
             return status(HttpStatus.OK).cacheControl(noCache()).body(results);
         });
     }
